@@ -4,25 +4,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import zipfile
 
-# File uploader widget
-uploaded_file = st.file_uploader("Choose a zip file containing the dataset", type="zip")
-
-if uploaded_file is not None:
-    # Extract the zip file
-    try:
-        with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
-            zip_ref.extractall()
-            extracted_file_path = [name for name in zip_ref.namelist() if name.endswith('.pkl')][0]
-    except zipfile.BadZipFile:
-        st.error("The zip file is corrupted or not a valid zip file.")
-        st.stop()
-
-    # Load data with error handling
-    try:
-        df = pd.read_pickle(extracted_file_path)
-    except (pd.errors.UnpickleError, FileNotFoundError) as e:
-        st.error(f"Error loading pickle file: {e}")
-        st.stop()
+with zipfile.ZipFile('sample_final.pkl.zip', 'r') as zipf:
+    with zipf.open('sample_final.pkl.zip') as f:
+        df = pd.read_pickle(f)
 
     df['event_time'] = pd.to_datetime(df['event_time'])
 
