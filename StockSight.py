@@ -6,15 +6,29 @@ import zipfile
 import os
 
 # File path to the zip data
-zip_file_path = 'sample_final.pkl.zip'
+zip_file_path = 'sample_final.zip'
 extracted_file_path = 'sample_final.pkl'
 
 # Extract the zip file
-with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-    zip_ref.extractall()
+try:
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall()
+except zipfile.BadZipFile:
+    st.error("The zip file is corrupted or not a valid zip file.")
+    st.stop()
 
-# Load data
-df = pd.read_pickle(extracted_file_path)
+# Check if the file exists after extraction
+if not os.path.exists(extracted_file_path):
+    st.error(f"The file {extracted_file_path} was not found after extraction.")
+    st.stop()
+
+# Load data with error handling
+try:
+    df = pd.read_pickle(extracted_file_path)
+except (pd.errors.UnpickleError, FileNotFoundError) as e:
+    st.error(f"Error loading pickle file: {e}")
+    st.stop()
+
 df['event_time'] = pd.to_datetime(df['event_time'])
 
 # Processing data
