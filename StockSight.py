@@ -6,7 +6,7 @@ import zipfile
 import os
 
 # File path to the zip data
-zip_file_path = 'sample_final.zip'
+zip_file_path = 'sample_final.pkl.zip'
 extracted_file_path = 'sample_final.pkl'
 
 # Extract the zip file
