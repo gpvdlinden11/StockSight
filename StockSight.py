@@ -2,12 +2,19 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import zipfile
+import os
 
-# File path to the data
-file_path = 'sample_final.pkl'
+# File path to the zip data
+zip_file_path = 'sample_final.zip'
+extracted_file_path = 'sample_final.pkl'
+
+# Extract the zip file
+with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+    zip_ref.extractall()
 
 # Load data
-df = pd.read_pickle(file_path)
+df = pd.read_pickle(extracted_file_path)
 df['event_time'] = pd.to_datetime(df['event_time'])
 
 # Processing data
