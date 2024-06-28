@@ -54,7 +54,7 @@ if uploaded_file is not None:
         "accent_negative": "#ff2c6d",
         "accent_positive": "#33ffe6",
         "background_content": "#F2E9DD",
-        "background_page": "#E8DAC5",
+        "background_page": "#F5D995",
         "border": "#d3bd98",
         "border_style": {
             "name": "underlined",
