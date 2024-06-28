@@ -7,7 +7,7 @@ import zipfile
 # Función para cargar y procesar datos
 def load_data(file_path):
     with zipfile.ZipFile(file_path, 'r') as zipf:
-        with zipf.open('sample_final.pkl.zip') as f:
+        with zipf.open('sample_final.pkl') as f:
             df = pd.read_pickle(f)
 
     df['event_time'] = pd.to_datetime(df['event_time'])
