@@ -139,7 +139,7 @@ with tab5:
     categories = st.multiselect("Select Categories", options=unique_categories)
 
     # Display options
-    display_option = st.radio("Choose to Display", ('Purchases', 'Views'))
+    display_option = st.radio("Choose to Display", ('purchase', 'view'))
 
     # Filter and display data
     try:
@@ -158,7 +158,7 @@ with tab5:
         st.subheader("Purchases and Views Overview")
         st.write(
             grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
-            .rename(columns={display_option.lower(): display_option})
+            .rename(columns={display_option.lower(): display_option.capitalize()})
             .style
             .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
         )
