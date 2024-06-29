@@ -9,7 +9,6 @@ def load_data(file_path):
     with zipfile.ZipFile(file_path, 'r') as zipf:
         # List files in the ZIP archive
         file_names = zipf.namelist()
-        st.write("Files in zip:", file_names)  # Display the file names in Streamlit
 
         # Assuming there is only one file in the ZIP
         data_file = file_names[0]
@@ -43,7 +42,7 @@ def prepare_visualization_data(df):
     return monthly_data, at_risk_products
 
 # Load and process data
-df = load_data('sample_final.pkl.zip')
+df = load_data('/mnt/data/sample_final.pkl.zip')
 unique_categories = df['main_category'].dropna().unique()
 monthly_data, at_risk_products = prepare_visualization_data(df)
 total_products, total_views, total_purchases, total_brands, total_categories, total_subcategories = calculate_statistics(df)
@@ -130,8 +129,8 @@ with tab4:
 
 # Sidebar filters
 st.sidebar.subheader("Date Range Filter")
-start_date = st.sidebar.date_input("Start Date", df['event_time'].min())
-end_date = st.sidebar.date_input("End Date", df['event_time'].max())
+start_date = st.sidebar.date_input("Start Date", df['event_time'].min().date())
+end_date = st.sidebar.date_input("End Date", df['event_time'].max().date())
 
 st.sidebar.subheader("Category Filter")
 categories = st.sidebar.multiselect("Select Categories", options=unique_categories)
@@ -139,8 +138,12 @@ categories = st.sidebar.multiselect("Select Categories", options=unique_categori
 st.sidebar.subheader("Display Options")
 display_option = st.sidebar.radio("Choose to Display", ('Purchases', 'Views'))
 
+# Convert start_date and end_date to datetime
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
+
 # Filter and display data
-filtered_df = df[(df['event_time'] >= pd.to_datetime(start_date)) & (df['event_time'] <= pd.to_datetime(end_date))]
+filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
 if categories:
     filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
 
