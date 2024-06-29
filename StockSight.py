@@ -56,6 +56,7 @@ theme = {
 }
 
 # Streamlit app layout
+st.set_page_config(layout="wide")
 st.title("Group 5 Dashboard")
 
 # Display general statistics
