@@ -47,37 +47,27 @@ unique_categories = df['main_category'].dropna().unique()
 monthly_data, at_risk_products = prepare_visualization_data(df)
 total_products, total_views, total_purchases, total_brands, total_categories, total_subcategories = calculate_statistics(df)
 
-# Theme setup
-background_color = "#F5D995"
-text_color = "#000000"  # Black
-graph_color = "#FF5722"  # Orange
-
-# Custom CSS to apply the theme
-st.markdown(
-    f"""
+# Custom CSS for full beige background and text styling
+st.markdown("""
     <style>
-    .reportview-container {{
-        background-color: {background_color};
-        color: {text_color};
-    }}
-    .sidebar .sidebar-content {{
-        background-color: {background_color};
-        color: {text_color};
-    }}
-    .stTabs [data-baseweb="tab"] {{
-        font-family: 'Abel', sans-serif;
-        color: {text_color};
-    }}
-    .stMetric .stMetric-value {{
-        color: {text_color};
-    }}
-    .css-1aumxhk {{
-        color: {text_color};
-    }}
+        body {
+            background-color: #F5D995;
+        }
+        .stApp {
+            background-color: #F5D995;
+            color: #000000;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #000000;
+        }
+        .css-1vbd788 p {
+            color: #000000;
+        }
+        .st-d3 {
+            color: #000000;
+        }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+    """, unsafe_allow_html=True)
 
 # Streamlit app layout
 st.title("Group 5 Dashboard")
@@ -100,28 +90,16 @@ with tab1:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Total Views per Month")
-        fig_monthly_views = px.line(monthly_data, x='year_month', y='view', title='Total Views per Month', color_discrete_sequence=[graph_color])
-        fig_monthly_views.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_monthly_views)
+        fig_monthly_views = px.line(monthly_data, x='year_month', y='view', title='Total Views per Month')
+        fig_monthly_views.update_traces(line=dict(color="#FF5722"))
+        fig_monthly_views.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_monthly_views, use_container_width=True)
     with col2:
         st.subheader("Total Purchases per Month")
-        fig_monthly_purchases = px.line(monthly_data, x='year_month', y='purchase', title='Total Purchases per Month', color_discrete_sequence=[graph_color])
-        fig_monthly_purchases.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_monthly_purchases)
+        fig_monthly_purchases = px.line(monthly_data, x='year_month', y='purchase', title='Total Purchases per Month')
+        fig_monthly_purchases.update_traces(line=dict(color="#FF5722"))
+        fig_monthly_purchases.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_monthly_purchases, use_container_width=True)
 
 with tab2:
     st.header("Top Categories")
@@ -130,30 +108,18 @@ with tab2:
         st.subheader("Top 5 Categories with Most Purchases")
         top_5_purchases = df.groupby('category_code')['purchase'].sum().nlargest(5).reset_index()
         fig_bubble_purchases = px.scatter(top_5_purchases, x='category_code', y='purchase', size='purchase', color='category_code',
-                                          title='Top 5 Categories with Most Purchases', color_discrete_sequence=[graph_color])
-        fig_bubble_purchases.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_bubble_purchases)
+                                          title='Top 5 Categories with Most Purchases')
+        fig_bubble_purchases.update_traces(marker=dict(color="#FF5722"))
+        fig_bubble_purchases.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_bubble_purchases, use_container_width=True)
     with col2:
         st.subheader("Top 5 Categories with Most Views")
         top_5_views = df.groupby('category_code')['view'].sum().nlargest(5).reset_index()
         fig_bubble_views = px.scatter(top_5_views, x='category_code', y='view', size='view', color='category_code',
-                                      title='Top 5 Categories with Most Views', color_discrete_sequence=[graph_color])
-        fig_bubble_views.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_bubble_views)
+                                      title='Top 5 Categories with Most Views')
+        fig_bubble_views.update_traces(marker=dict(color="#FF5722"))
+        fig_bubble_views.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_bubble_views, use_container_width=True)
 
 with tab3:
     st.header("Purchase Analysis")
@@ -161,31 +127,19 @@ with tab3:
     with col1:
         st.subheader("Total Purchases per Day")
         daily_purchases = df.groupby(df['event_time'].dt.date)['purchase'].sum().reset_index()
-        fig_bar = px.bar(daily_purchases, x='event_time', y='purchase', title='Total Purchases per Day', color_discrete_sequence=[graph_color])
-        fig_bar.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_bar)
+        fig_bar = px.bar(daily_purchases, x='event_time', y='purchase', title='Total Purchases per Day')
+        fig_bar.update_traces(marker=dict(color="#FF5722"))
+        fig_bar.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_bar, use_container_width=True)
     with col2:
         st.subheader(f"Purchase Frequency for User ID: 568782581")
         user_id = 568782581
         user_data = df[df['user_id'] == user_id]
         purchase_frequency = user_data[['event_time', 'purchase']].set_index('event_time').resample('D').sum().reset_index()
-        fig_user = px.line(purchase_frequency, x='event_time', y='purchase', title=f'Purchase Frequency for User ID: {user_id}', color_discrete_sequence=[graph_color])
-        fig_user.update_layout(
-            paper_bgcolor=background_color,
-            plot_bgcolor=background_color,
-            font=dict(color=text_color),
-            title_font=dict(color=text_color),
-            xaxis=dict(tickfont=dict(color=text_color)),
-            yaxis=dict(tickfont=dict(color=text_color))
-        )
-        st.plotly_chart(fig_user)
+        fig_user = px.line(purchase_frequency, x='event_time', y='purchase', title=f'Purchase Frequency for User ID: {user_id}')
+        fig_user.update_traces(line=dict(color="#FF5722"))
+        fig_user.update_layout(paper_bgcolor="#F5D995", plot_bgcolor="#F2E9DD", font=dict(color="#000000"))
+        st.plotly_chart(fig_user, use_container_width=True)
 
 with tab4:
     st.header("At Risk Products")
