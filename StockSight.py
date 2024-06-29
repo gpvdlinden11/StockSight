@@ -184,9 +184,10 @@ with tab3:
 with tab4:
     st.header("At Risk Products")
     st.dataframe(at_risk_products)
-# Ensure start_date and end_date are datetime objects
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
+
+# Ensure start_date and end_date are datetime objects and timezone-aware
+start_date = pd.to_datetime(start_date).tz_localize('UTC')
+end_date = pd.to_datetime(end_date).tz_localize('UTC')
 
 # Filter and display data
 try:
