@@ -60,25 +60,30 @@ st.title("Group 5 Dashboard")
 
 # Display general statistics
 st.header("General Statistics")
-col1, col2, col3, col4, col5 = st.columns(5)
+col1, col2, col3, col4, col5, col6 = st.columns(6)
 col1.metric("Total Products", total_products)
 col2.metric("Total Views", total_views)
 col3.metric("Total Purchases", total_purchases)
 col4.metric("Total Brands", total_brands)
-col5.metric("Total Categories", f"{total_categories} Categories / {total_subcategories} Subcategories")
+col5.metric("Total Categories", total_categories)
+col6.metric("Total Subcategories", total_subcategories)
 
 # Tabs for different sections
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Monthly Totals", "Top Categories", "Purchase Analysis", "At Risk Products", "Purchases and Views Overview"])
 
 with tab1:
     st.header("Monthly Totals")
-    fig_monthly_views = px.line(monthly_data, x='year_month', y='view', title='Total Views per Month')
-    fig_monthly_views.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=700)
-    st.plotly_chart(fig_monthly_views, use_container_width=True)
-
-    fig_monthly_purchases = px.line(monthly_data, x='year_month', y='purchase', title='Total Purchases per Month')
-    fig_monthly_purchases.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=700)
-    st.plotly_chart(fig_monthly_purchases, use_container_width=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("Total Views per Month")
+        fig_monthly_views = px.line(monthly_data, x='year_month', y='view', title='Total Views per Month')
+        fig_monthly_views.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
+        st.plotly_chart(fig_monthly_views, use_container_width=True)
+    with col2:
+        st.subheader("Total Purchases per Month")
+        fig_monthly_purchases = px.line(monthly_data, x='year_month', y='purchase', title='Total Purchases per Month')
+        fig_monthly_purchases.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
+        st.plotly_chart(fig_monthly_purchases, use_container_width=True)
 
 with tab2:
     st.header("Top Categories")
@@ -88,14 +93,14 @@ with tab2:
         top_5_purchases = df.groupby('category_code')['purchase'].sum().nlargest(5).reset_index()
         fig_bubble_purchases = px.scatter(top_5_purchases, x='category_code', y='purchase', size='purchase', color='category_code',
                                           title='Top 5 Categories with Most Purchases')
-        fig_bubble_purchases.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=600)
+        fig_bubble_purchases.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
         st.plotly_chart(fig_bubble_purchases, use_container_width=True)
     with col2:
         st.subheader("Top 5 Categories with Most Views")
         top_5_views = df.groupby('category_code')['view'].sum().nlargest(5).reset_index()
         fig_bubble_views = px.scatter(top_5_views, x='category_code', y='view', size='view', color='category_code',
                                       title='Top 5 Categories with Most Views')
-        fig_bubble_views.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=600)
+        fig_bubble_views.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
         st.plotly_chart(fig_bubble_views, use_container_width=True)
 
 with tab3:
@@ -105,7 +110,7 @@ with tab3:
         st.subheader("Total Purchases per Day")
         daily_purchases = df.groupby(df['event_time'].dt.date)['purchase'].sum().reset_index()
         fig_bar = px.bar(daily_purchases, x='event_time', y='purchase', title='Total Purchases per Day')
-        fig_bar.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=600)
+        fig_bar.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
         st.plotly_chart(fig_bar, use_container_width=True)
     with col2:
         st.subheader(f"Purchase Frequency for User ID: 568782581")
@@ -113,7 +118,7 @@ with tab3:
         user_data = df[df['user_id'] == user_id]
         purchase_frequency = user_data[['event_time', 'purchase']].set_index('event_time').resample('D').sum().reset_index()
         fig_user = px.line(purchase_frequency, x='event_time', y='purchase', title=f'Purchase Frequency for User ID: {user_id}')
-        fig_user.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), width=600)
+        fig_user.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
         st.plotly_chart(fig_user, use_container_width=True)
 
 with tab4:
