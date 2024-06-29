@@ -58,30 +58,6 @@ theme = {
 # Streamlit app layout
 st.title("Group 5 Dashboard")
 
-st.sidebar.header("Filter Options")
-selected_category = st.sidebar.selectbox("Select Category", options=[None] + list(unique_categories))
-
-# Date range filter
-st.sidebar.subheader("Date Range Filter")
-start_date = st.sidebar.date_input("Start Date", df['event_time'].min().date())
-end_date = st.sidebar.date_input("End Date", df['event_time'].max().date())
-
-# Ensure start_date and end_date are datetime objects and timezone-aware
-start_date = pd.to_datetime(start_date).normalize()
-end_date = pd.to_datetime(end_date).normalize()
-
-# Debug: Show selected dates
-st.sidebar.write(f"Selected start date: {start_date}")
-st.sidebar.write(f"Selected end date: {end_date}")
-
-# Category filter
-st.sidebar.subheader("Category Filter")
-categories = st.sidebar.multiselect("Select Categories", options=unique_categories)
-
-# Display options
-st.sidebar.subheader("Display Options")
-display_option = st.sidebar.radio("Choose to Display", ('Purchases', 'Views'))
-
 # Display general statistics
 st.header("General Statistics")
 col1, col2, col3, col4, col5 = st.columns(5)
@@ -150,6 +126,20 @@ with tab4:
 
 with tab5:
     st.header("Purchases and Views Overview")
+
+    # Date range filter
+    start_date = st.date_input("Start Date", df['event_time'].min().date())
+    end_date = st.date_input("End Date", df['event_time'].max().date())
+
+    # Ensure start_date and end_date are datetime objects and timezone-naive
+    start_date = pd.to_datetime(start_date).normalize()
+    end_date = pd.to_datetime(end_date).normalize()
+
+    # Category filter
+    categories = st.multiselect("Select Categories", options=unique_categories)
+
+    # Display options
+    display_option = st.radio("Choose to Display", ('Purchases', 'Views'))
 
     # Filter and display data
     try:
