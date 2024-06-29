@@ -66,17 +66,13 @@ st.sidebar.subheader("Date Range Filter")
 start_date = st.sidebar.date_input("Start Date", df['event_time'].min().date())
 end_date = st.sidebar.date_input("End Date", df['event_time'].max().date())
 
+# Ensure start_date and end_date are datetime objects and timezone-aware
+start_date = pd.to_datetime(start_date).normalize()
+end_date = pd.to_datetime(end_date).normalize()
+
 # Debug: Show selected dates
 st.sidebar.write(f"Selected start date: {start_date}")
 st.sidebar.write(f"Selected end date: {end_date}")
-
-# Ensure start_date and end_date are datetime objects
-start_date = pd.to_datetime(start_date)
-end_date = pd.to_datetime(end_date)
-
-# Debug: Show converted dates
-st.sidebar.write(f"Converted start date: {start_date}")
-st.sidebar.write(f"Converted end date: {end_date}")
 
 # Category filter
 st.sidebar.subheader("Category Filter")
@@ -85,39 +81,6 @@ categories = st.sidebar.multiselect("Select Categories", options=unique_categori
 # Display options
 st.sidebar.subheader("Display Options")
 display_option = st.sidebar.radio("Choose to Display", ('Purchases', 'Views'))
-
-# Filter and display data
-try:
-    filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
-    if categories:
-        filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
-
-    # Debug: Show filtered data
-    st.write("Filtered Data:", filtered_df.head())
-
-    grouped_data = filtered_df.groupby(['category_code', 'brand', 'price'])[display_option.lower()].sum().reset_index()
-    grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
-
-    # Display filtered data in a table
-    st.header("Purchases and Views Overview")
-    fig_filtered = go.Figure(data=[
-        go.Table(
-            header=dict(
-                values=list(grouped_data.columns),
-                fill_color='lightgrey',
-                align='left'
-            ),
-            cells=dict(
-                values=[grouped_data[col] for col in grouped_data.columns],
-                fill_color='lightsteelblue',
-                align='left'
-            )
-        )
-    ])
-    fig_filtered.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
-    st.plotly_chart(fig_filtered)
-except Exception as e:
-    st.error(f"Error occurred: {e}")
 
 # Display general statistics
 st.header("General Statistics")
@@ -129,7 +92,7 @@ col4.metric("Total Brands", total_brands)
 col5.metric("Total Categories", f"{total_categories} Categories / {total_subcategories} Subcategories")
 
 # Tabs for different sections
-tab1, tab2, tab3, tab4 = st.tabs(["Monthly Totals", "Top Categories", "Purchase Analysis", "At Risk Products"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Monthly Totals", "Top Categories", "Purchase Analysis", "At Risk Products", "Purchases and Views Overview"])
 
 with tab1:
     st.header("Monthly Totals")
@@ -185,39 +148,37 @@ with tab4:
     st.header("At Risk Products")
     st.dataframe(at_risk_products)
 
-# Ensure start_date and end_date are datetime objects and timezone-aware
-start_date = pd.to_datetime(start_date).tz_localize('UTC')
-end_date = pd.to_datetime(end_date).tz_localize('UTC')
-
-# Filter and display data
-try:
-    filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
-    if categories:
-        filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
-
-    # Debug: Show filtered data
-    st.write("Filtered Data:", filtered_df.head())
-
-    grouped_data = filtered_df.groupby(['category_code', 'brand', 'price'])[display_option.lower()].sum().reset_index()
-    grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
-
-    # Display filtered data in a table
+with tab5:
     st.header("Purchases and Views Overview")
-    fig_filtered = go.Figure(data=[
-        go.Table(
-            header=dict(
-                values=list(grouped_data.columns),
-                fill_color='lightgrey',
-                align='left'
-            ),
-            cells=dict(
-                values=[grouped_data[col] for col in grouped_data.columns],
-                fill_color='lightsteelblue',
-                align='left'
+
+    # Filter and display data
+    try:
+        filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
+        if categories:
+            filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
+
+        # Debug: Show filtered data
+        st.write("Filtered Data:", filtered_df.head())
+
+        grouped_data = filtered_df.groupby(['category_code', 'brand', 'price'])[display_option.lower()].sum().reset_index()
+        grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
+
+        # Display filtered data in a table
+        fig_filtered = go.Figure(data=[
+            go.Table(
+                header=dict(
+                    values=list(grouped_data.columns),
+                    fill_color='lightgrey',
+                    align='left'
+                ),
+                cells=dict(
+                    values=[grouped_data[col] for col in grouped_data.columns],
+                    fill_color='lightsteelblue',
+                    align='left'
+                )
             )
-        )
-    ])
-    fig_filtered.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
-    st.plotly_chart(fig_filtered)
-except Exception as e:
-    st.error(f"Error occurred: {e}")
+        ])
+        fig_filtered.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
+        st.plotly_chart(fig_filtered)
+    except Exception as e:
+        st.error(f"Error occurred: {e}")
