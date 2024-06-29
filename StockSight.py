@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 import zipfile
 
@@ -157,6 +158,7 @@ with tab5:
         st.subheader("Purchases and Views Overview")
         st.write(
             grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
+            .rename(columns={display_option.lower(): display_option})
             .style
             .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
         )
