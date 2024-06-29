@@ -141,6 +141,9 @@ with tab5:
     # Display options
     display_option = st.radio("Choose to Display", ('purchase', 'view'))
 
+    # Initialize an empty dataframe
+    grouped_data = pd.DataFrame()
+
     # Filter and display data
     if start_date and end_date and display_option:
         try:
@@ -155,13 +158,18 @@ with tab5:
 
             grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
 
-            # Display filtered data in a table with selected columns
-            st.subheader("Purchases and Views Overview")
-            st.write(
-                grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
-                .rename(columns={display_option.lower(): display_option.capitalize()})
-                .style
-                .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
-            )
         except Exception as e:
             st.error(f"Error occurred: {e}")
+
+    # Display filtered data in a table with selected columns
+    if not grouped_data.empty:
+        st.write(
+            grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
+            .rename(columns={display_option.lower(): display_option.capitalize()})
+            .style
+            .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
+        )
+
+    # Add a message if no data is found
+    if grouped_data.empty:
+        st.write("No data available for the selected filters.")
