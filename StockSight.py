@@ -9,7 +9,6 @@ def load_data(file_path):
     with zipfile.ZipFile(file_path, 'r') as zipf:
         # List files in the ZIP archive
         file_names = zipf.namelist()
-        st.write("Files in zip:", file_names)  # Display the file names in Streamlit
 
         # Assuming there is only one file in the ZIP
         data_file = file_names[0]
