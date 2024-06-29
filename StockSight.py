@@ -57,7 +57,7 @@ theme = {
 
 # Streamlit app layout
 st.set_page_config(layout="wide")
-st.title("Group 5 Dashboard")
+st.title("StockSight Dashboard")
 
 # Display general statistics
 st.header("General Statistics")
