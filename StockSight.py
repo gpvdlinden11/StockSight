@@ -147,28 +147,15 @@ with tab5:
         if categories:
             filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
 
-        # Debug: Show filtered data
-        st.write("Filtered Data:", filtered_df.head())
-
         grouped_data = filtered_df.groupby(['category_code', 'brand', 'price'])[display_option.lower()].sum().reset_index()
         grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
 
-        # Display filtered data in a table
-        fig_filtered = go.Figure(data=[
-            go.Table(
-                header=dict(
-                    values=list(grouped_data.columns),
-                    fill_color='lightgrey',
-                    align='left'
-                ),
-                cells=dict(
-                    values=[grouped_data[col] for col in grouped_data.columns],
-                    fill_color='lightsteelblue',
-                    align='left'
-                )
-            )
-        ])
-        fig_filtered.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
-        st.plotly_chart(fig_filtered)
+        # Display filtered data in a table with selected columns
+        st.subheader("Purchases and Views Overview")
+        st.write(
+            grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
+            .style
+            .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
+        )
     except Exception as e:
         st.error(f"Error occurred: {e}")
