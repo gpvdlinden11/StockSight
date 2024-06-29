@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 import zipfile
 
@@ -148,17 +147,16 @@ with tab5:
             filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
 
         grouped_data = filtered_df.groupby(['category_code', 'brand', 'price']).agg(
-            total_purchase=('purchase', 'sum'),
-            total_view=('view', 'sum')
+            purchase=('purchase', 'sum'),
+            view=('view', 'sum')
         ).reset_index()
 
-        grouped_data = grouped_data.sort_values(by=f'total_{display_option.lower()}', ascending=False)
+        grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
 
         # Display filtered data in a table with selected columns
         st.subheader("Purchases and Views Overview")
         st.write(
-            grouped_data[['category_code', 'brand', 'price', f'total_{display_option.lower()}']]
-            .rename(columns={f'total_{display_option.lower()}': display_option})
+            grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
             .style
             .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
         )
