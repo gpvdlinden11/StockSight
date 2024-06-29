@@ -129,8 +129,12 @@ with tab4:
 
 # Sidebar filters
 st.sidebar.subheader("Date Range Filter")
-start_date = st.sidebar.date_input("Start Date", df['event_time'].min())
-end_date = st.sidebar.date_input("End Date", df['event_time'].max())
+start_date = st.sidebar.date_input("Start Date", df['event_time'].min().date())
+end_date = st.sidebar.date_input("End Date", df['event_time'].max().date())
+
+# Ensure start_date and end_date are datetime objects
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
 
 st.sidebar.subheader("Category Filter")
 categories = st.sidebar.multiselect("Select Categories", options=unique_categories)
@@ -139,7 +143,7 @@ st.sidebar.subheader("Display Options")
 display_option = st.sidebar.radio("Choose to Display", ('Purchases', 'Views'))
 
 # Filter and display data
-filtered_df = df[(df['event_time'] >= pd.to_datetime(start_date)) & (df['event_time'] <= pd.to_datetime(end_date))]
+filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
 if categories:
     filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
 
