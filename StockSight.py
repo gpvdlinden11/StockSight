@@ -21,6 +21,27 @@ def load_data(zip_file):
     df['year_month'] = df['event_time'].dt.to_period('M').astype(str)
     return df
 
+# Function to calculate general statistics
+def calculate_statistics(df):
+    total_products = df['product_id'].nunique()
+    total_views = df['view'].sum()
+    total_purchases = df['purchase'].sum()
+    total_brands = df['brand'].nunique()
+    total_categories = df['category_code'].str.split('.').str[0].nunique()
+    total_subcategories = df['category_code'].nunique()
+    return total_products, total_views, total_purchases, total_brands, total_categories, total_subcategories
+
+# Function to prepare visualization data
+def prepare_visualization_data(df):
+    monthly_data = df.groupby('year_month').agg({'view': 'sum', 'purchase': 'sum'}).reset_index()
+    product_stats = df.groupby('product_id').agg(
+        total_views=('view', 'sum'),
+        total_purchases=('purchase', 'sum')
+    ).reset_index()
+    product_stats['view_to_purchase_ratio'] = product_stats['total_views'] / (product_stats['total_purchases'] + 1)
+    at_risk_products = product_stats[product_stats['view_to_purchase_ratio'] > 10]
+    return monthly_data, at_risk_products
+
 # Streamlit app layout
 st.title("Group 5 Dashboard")
 
@@ -134,8 +155,21 @@ if uploaded_file:
     grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
 
     st.header("Purchases and Views Overview")
-    fig_filtered = go.Figure(data=[go.Table(
-        header=dict(values=list(grouped_data.columns),
-                    fill_color='lightgrey',
-                    align='left'),
-        cel
+    fig_filtered = go.Figure(data=[
+        go.Table(
+            header=dict(
+                values=list(grouped_data.columns),
+                fill_color='lightgrey',
+                align='left'
+            ),
+            cells=dict(
+                values=[grouped_data[col] for col in grouped_data.columns],
+                fill_color='lightsteelblue',
+                align='left'
+            )
+        )
+    ])
+    fig_filtered.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'))
+    st.plotly_chart(fig_filtered)
+else:
+    st.info("Please upload a ZIP file containing the sample_final.pkl data.")
