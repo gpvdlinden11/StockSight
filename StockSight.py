@@ -15,7 +15,7 @@ def load_data(file_path):
         with zipf.open(data_file) as f:
             df = pd.read_pickle(f)
 
-    df['event_time'] = pd.to_datetime(df['event_time'])
+    df['event_time'] = pd.to_datetime(df['event_time']).dt.tz_localize(None)  # Make event_time timezone-naive
     df['main_category'] = df['category_code'].apply(lambda x: x.split('.')[0] if pd.notnull(x) else None)
     df['year_month'] = df['event_time'].dt.to_period('M').astype(str)
     return df
