@@ -142,25 +142,26 @@ with tab5:
     display_option = st.radio("Choose to Display", ('purchase', 'view'))
 
     # Filter and display data
-    try:
-        filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
-        if categories:
-            filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
+    if start_date and end_date and display_option:
+        try:
+            filtered_df = df[(df['event_time'] >= start_date) & (df['event_time'] <= end_date)]
+            if categories:
+                filtered_df = filtered_df[filtered_df['main_category'].isin(categories)]
 
-        grouped_data = filtered_df.groupby(['category_code', 'brand', 'price']).agg(
-            purchase=('purchase', 'sum'),
-            view=('view', 'sum')
-        ).reset_index()
+            grouped_data = filtered_df.groupby(['category_code', 'brand', 'price']).agg(
+                purchase=('purchase', 'sum'),
+                view=('view', 'sum')
+            ).reset_index()
 
-        grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
+            grouped_data = grouped_data.sort_values(by=display_option.lower(), ascending=False)
 
-        # Display filtered data in a table with selected columns
-        st.subheader("Purchases and Views Overview")
-        st.write(
-            grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
-            .rename(columns={display_option.lower(): display_option.capitalize()})
-            .style
-            .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
-        )
-    except Exception as e:
-        st.error(f"Error occurred: {e}")
+            # Display filtered data in a table with selected columns
+            st.subheader("Purchases and Views Overview")
+            st.write(
+                grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
+                .rename(columns={display_option.lower(): display_option.capitalize()})
+                .style
+                .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
+            )
+        except Exception as e:
+            st.error(f"Error occurred: {e}")
