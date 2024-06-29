@@ -163,11 +163,9 @@ with tab5:
 
     # Display filtered data in a table with selected columns
     if not grouped_data.empty:
-        st.write(
+        st.dataframe(
             grouped_data[['category_code', 'brand', 'price', display_option.lower()]]
             .rename(columns={display_option.lower(): display_option.capitalize()})
-            .style
-            .set_properties(**{'background-color': 'lightblue', 'color': 'black', 'border-color': 'black'})
         )
 
     # Add a message if no data is found
