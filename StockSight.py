@@ -116,7 +116,10 @@ with tab3:
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Total Purchases per Day")
-        daily_purchases = df.groupby(df['event_time'].dt.date)['purchase'].sum().reset_index()
+        # Filter data to include only Monday to Sunday
+        df['weekday'] = df['event_time'].dt.dayofweek
+        weekday_purchases = df[df['weekday'].isin([0, 1, 2, 3, 4, 5, 6])]
+        daily_purchases = weekday_purchases.groupby(df['event_time'].dt.date)['purchase'].sum().reset_index()
         fig_bar = px.bar(daily_purchases, x='event_time', y='purchase', title='Total Purchases per Day', color_discrete_sequence=[theme["primary_color"]])
         fig_bar.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), font_color=theme["text_color"])
         st.plotly_chart(fig_bar, use_container_width=True)
