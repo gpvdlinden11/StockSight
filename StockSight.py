@@ -115,13 +115,13 @@ with tab3:
     st.header("Purchase Analysis")
     col1, col2 = st.columns(2)
     with col1:
-        st.subheader("Total Purchases per Day")
-        # Filter data to include only Monday to Sunday
+        st.subheader("Total Purchases per Day of the Week")
+        # Group data by day of the week
         df['weekday'] = df['event_time'].dt.dayofweek
-        df['event_date'] = df['event_time'].dt.date
-        weekday_purchases = df[df['weekday'].isin([0, 1, 2, 3, 4, 5, 6])]
-        daily_purchases = weekday_purchases.groupby(['event_date', 'weekday'])['purchase'].sum().reset_index()
-        fig_bar = px.bar(daily_purchases, x='event_date', y='purchase', title='Total Purchases per Day', color='weekday', color_discrete_sequence=px.colors.qualitative.Set1)
+        weekday_purchases = df.groupby('weekday')['purchase'].sum().reset_index()
+        weekday_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        weekday_purchases['weekday'] = weekday_purchases['weekday'].apply(lambda x: weekday_names[x])
+        fig_bar = px.bar(weekday_purchases, x='weekday', y='purchase', title='Total Purchases per Day of the Week', color_discrete_sequence=[theme["primary_color"]])
         fig_bar.update_layout(paper_bgcolor=theme.get('background_page'), plot_bgcolor=theme.get('background_content'), font_color=theme["text_color"])
         st.plotly_chart(fig_bar, use_container_width=True)
     with col2:
